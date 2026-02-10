@@ -1,0 +1,74 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: padelapp_db
+    environment:
+      POSTGRES_DB: padelapp
+      POSTGRES_USER: padeluser
+      POSTGRES_PASSWORD: padelpass
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - padelapp_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U padeluser -d padelapp"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: padelapp_backend
+    command: >
+      sh -c "python manage.py makemigrations &&
+             python manage.py migrate &&
+             python manage.py runserver 0.0.0.0:8000"
+    volumes:
+      - ./backend:/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DB_NAME: padelapp
+      DB_USER: padeluser
+      DB_PASSWORD: padelpass
+      DB_HOST: db
+      DB_PORT: 5432
+      SECRET_KEY: django-insecure-dev-key-change-in-production
+      DEBUG: "True"
+      ALLOWED_HOSTS: localhost,127.0.0.1,backend
+      CORS_ALLOWED_ORIGINS: http://localhost:5174,http://localhost:3000
+    networks:
+      - padelapp_network
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: padelapp_frontend
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    ports:
+      - "5174:5173"
+    depends_on:
+      - backend
+    environment:
+      VITE_API_URL: http://localhost:8000
+    networks:
+      - padelapp_network
+
+volumes:
+  postgres_data:
+
+networks:
+  padelapp_network:
+    driver: bridge

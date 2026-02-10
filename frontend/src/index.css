@@ -1,0 +1,232 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  overflow-x: hidden;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+#root {
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+/* Glassmorphism effect */
+.glass {
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+/* Gradient backgrounds */
+.gradient-primary {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.gradient-success {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+}
+
+.gradient-blue {
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* React Big Calendar custom styles */
+.rbc-calendar {
+  font-size: 14px;
+  font-family: 'Inter', sans-serif;
+}
+
+.rbc-header {
+  padding: 12px 6px;
+  font-weight: 600;
+  font-size: 14px;
+  background: linear-gradient(to bottom, rgba(99, 102, 241, 0.05), transparent);
+  border-bottom: 2px solid rgba(99, 102, 241, 0.1) !important;
+  color: #4338ca;
+}
+
+.rbc-time-slot {
+  min-height: 45px;
+  border-top: 1px solid rgba(226, 232, 240, 0.8) !important;
+}
+
+.rbc-timeslot-group {
+  border-left: 1px solid rgba(226, 232, 240, 0.8) !important;
+}
+
+.rbc-time-header-content {
+  border-left: 1px solid rgba(226, 232, 240, 0.8) !important;
+}
+
+.rbc-day-slot .rbc-time-slot {
+  border-top: 1px solid rgba(226, 232, 240, 0.6) !important;
+}
+
+.rbc-event {
+  padding: 6px 8px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 500;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  border: none !important;
+  transition: all 0.2s ease;
+}
+
+.rbc-event:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.rbc-event.rbc-selected {
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.3), 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.rbc-today {
+  background-color: rgba(99, 102, 241, 0.03) !important;
+}
+
+.rbc-current-time-indicator {
+  background-color: #6366f1 !important;
+  height: 2px !important;
+}
+
+/* Status colors for bookings */
+.booking-available {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  border-color: #059669;
+}
+
+.booking-reserved {
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  border-color: #2563eb;
+}
+
+.booking-cancelled {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  border-color: #dc2626;
+}
+
+.booking-completed {
+  background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+  border-color: #4b5563;
+}
+
+/* Button styles */
+.rbc-btn-group button {
+  padding: 6px 16px;
+  border-radius: 10px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  border: 2px solid #e5e7eb;
+  background: white;
+  color: #374151;
+}
+
+.rbc-btn-group button:hover {
+  background: #f9fafb;
+  border-color: #6366f1;
+  color: #6366f1;
+}
+
+.rbc-btn-group button.rbc-active {
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+  color: white;
+  border-color: #6366f1;
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+}
+
+.rbc-toolbar {
+  padding: 12px 0;
+  margin-bottom: 16px;
+}
+
+.rbc-toolbar button {
+  margin: 0 4px;
+}
+
+/* ========== Responsive: horizontal scroll on mobile (touch-friendly) ========== */
+.overflow-x-auto {
+  -webkit-overflow-scrolling: touch;
+}
+
+/* ========== React Big Calendar: mobile responsive ========== */
+@media (max-width: 767px) {
+  .rbc-calendar {
+    font-size: 12px;
+  }
+  .rbc-toolbar {
+    flex-direction: column;
+    gap: 12px;
+    align-items: stretch;
+  }
+  .rbc-toolbar-label {
+    text-align: center;
+    font-size: 14px;
+  }
+  .rbc-btn-group {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .rbc-btn-group button {
+    padding: 6px 10px;
+    font-size: 12px;
+  }
+  .rbc-header {
+    padding: 8px 4px;
+    font-size: 11px;
+  }
+  .rbc-time-slot {
+    min-height: 36px;
+    font-size: 11px;
+  }
+  .rbc-event {
+    padding: 2px 4px;
+    font-size: 10px;
+  }
+  .rbc-day-slot .rbc-events-container {
+    margin-right: 2px;
+  }
+}

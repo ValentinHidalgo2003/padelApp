@@ -1,0 +1,78 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: padelapp_db_prod
+    restart: always
+    environment:
+      POSTGRES_DB: ${DB_NAME:-padelapp}
+      POSTGRES_USER: ${DB_USER:-padeluser}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - postgres_data_prod:/var/lib/postgresql/data
+    networks:
+      - padelapp_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-padeluser} -d ${DB_NAME:-padelapp}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.prod
+    container_name: padelapp_backend_prod
+    restart: always
+    command: >
+      sh -c "python manage.py migrate --noinput &&
+             gunicorn config.wsgi:application
+             --bind 0.0.0.0:8000
+             --workers ${GUNICORN_WORKERS:-3}
+             --worker-class gthread
+             --threads 2
+             --timeout 120
+             --access-logfile -
+             --error-logfile -"
+    expose:
+      - "8000"
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DB_NAME: ${DB_NAME:-padelapp}
+      DB_USER: ${DB_USER:-padeluser}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_HOST: db
+      DB_PORT: 5432
+      SECRET_KEY: ${SECRET_KEY}
+      DEBUG: "False"
+      ALLOWED_HOSTS: ${ALLOWED_HOSTS:-localhost}
+      CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:-http://localhost}
+      SECURE_SSL_REDIRECT: ${SECURE_SSL_REDIRECT:-False}
+      LOG_LEVEL: ${LOG_LEVEL:-WARNING}
+    networks:
+      - padelapp_network
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.prod
+      args:
+        VITE_API_URL: ""
+    container_name: padelapp_frontend_prod
+    restart: always
+    ports:
+      - "${APP_PORT:-80}:80"
+    depends_on:
+      - backend
+    networks:
+      - padelapp_network
+
+volumes:
+  postgres_data_prod:
+
+networks:
+  padelapp_network:
+    driver: bridge
