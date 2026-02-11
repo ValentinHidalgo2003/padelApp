@@ -64,7 +64,6 @@ services:
   - type: web
     name: padelapp-frontend
     runtime: static
-    region: oregon
     branch: main
     rootDir: frontend
     buildCommand: npm install && npm run build
