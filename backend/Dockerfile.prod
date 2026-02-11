@@ -38,14 +38,5 @@ USER appuser
 EXPOSE 8000
 
 # Use entrypoint to run migrations before starting gunicorn
+# El entrypoint usa la variable PORT que Render inyecta (ej: 10000)
 ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
-
-# Run with gunicorn (passed to entrypoint as arguments)
-CMD ["gunicorn", "config.wsgi:application", \
-     "--bind", "0.0.0.0:8000", \
-     "--workers", "3", \
-     "--worker-class", "gthread", \
-     "--threads", "2", \
-     "--timeout", "120", \
-     "--access-logfile", "-", \
-     "--error-logfile", "-"]
