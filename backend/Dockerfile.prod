@@ -20,6 +20,10 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy application code
 COPY . .
 
+# Copy and make entrypoint executable
+COPY docker-entrypoint.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+
 # Collect static files
 RUN SECRET_KEY=build-placeholder DEBUG=False \
     python manage.py collectstatic --noinput
@@ -33,7 +37,10 @@ USER appuser
 
 EXPOSE 8000
 
-# Run with gunicorn
+# Use entrypoint to run migrations before starting gunicorn
+ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
+
+# Run with gunicorn (passed to entrypoint as arguments)
 CMD ["gunicorn", "config.wsgi:application", \
      "--bind", "0.0.0.0:8000", \
      "--workers", "3", \

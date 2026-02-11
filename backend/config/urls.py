@@ -1,13 +1,22 @@
 from django.contrib import admin
 from django.urls import path, include
+from django.http import JsonResponse
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 from apps.courts.config_views import (
     get_configuration, update_configuration,
     get_court_prices, update_court_price,
 )
 
+def health_check(request):
+    """Health check endpoint for monitoring"""
+    return JsonResponse({'status': 'ok', 'service': 'padelapp-backend'})
+
 urlpatterns = [
     path('admin/', admin.site.urls),
+    
+    # Health check (for monitoring/load balancer)
+    path('api/health/', health_check, name='health-check'),
+    
     path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
     path('api/docs/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
     path('api/auth/', include('apps.users.urls')),

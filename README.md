@@ -166,6 +166,37 @@ cd frontend
 npm test
 ```
 
+## 🚀 Despliegue en Producción
+
+Este proyecto está **100% listo para desplegar en Render** con un solo click.
+
+### Guías de Despliegue Disponibles:
+
+- **[README.DEPLOY.md](./README.DEPLOY.md)** - 🎯 Punto de entrada principal
+- **[RENDER_QUICKSTART.md](./RENDER_QUICKSTART.md)** - ⚡ Despliegue rápido (5 min)
+- **[RENDER_DEPLOYMENT.md](./RENDER_DEPLOYMENT.md)** - 📖 Guía detallada paso a paso
+- **[DEPLOY_CHECKLIST.md](./DEPLOY_CHECKLIST.md)** - ✅ Checklist interactivo
+
+### Despliegue Rápido:
+
+```bash
+# 1. Verifica que todo esté listo
+./check_deploy_readiness.sh
+
+# 2. Sube a GitHub
+git add .
+git commit -m "Ready for deployment"
+git push origin main
+
+# 3. Ve a Render y usa el Blueprint
+# https://dashboard.render.com/ → New + → Blueprint
+```
+
+**Tiempo estimado**: 15-20 minutos  
+**Costo**: Desde $0/mes (plan Free)
+
+---
+
 ## Extensibilidad Futura
 
 El sistema está preparado para integrar:
