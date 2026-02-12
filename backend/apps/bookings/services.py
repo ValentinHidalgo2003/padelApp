@@ -309,6 +309,7 @@ class BookingService:
         """
         Generar slots disponibles según configuración global
         Si se proporciona court_id, filtra por esa cancha
+        OPTIMIZADO: Una sola query para todos los bookings del día
         """
         from apps.courts.models import Court
         
@@ -323,9 +324,24 @@ class BookingService:
         if not courts.exists():
             return []
         
+        # OPTIMIZACIÓN: Obtener todos los bookings del día en una sola query
+        court_ids = [c.id for c in courts]
+        bookings = Booking.objects.filter(
+            court_id__in=court_ids,
+            date=date
+        ).exclude(status='cancelled').values('court_id', 'start_time', 'end_time')
+        
+        # Crear un dict para búsqueda rápida: {court_id: [bookings]}
+        bookings_by_court = {}
+        for court in courts:
+            bookings_by_court[court.id] = []
+        for booking in bookings:
+            bookings_by_court[booking['court_id']].append(booking)
+        
         slots = []
         current_time = config.opening_time
         end_time = config.closing_time
+        now = timezone.now()
         
         while current_time < end_time:
             # Calcular slot_end
@@ -337,18 +353,14 @@ class BookingService:
                 break
             
             for court in courts:
-                # Verificar si hay overlap con bookings existentes
-                overlapping = Booking.objects.filter(
-                    court=court,
-                    date=date,
-                    start_time__lt=slot_end,
-                    end_time__gt=current_time
-                ).exclude(status='cancelled')
-                
-                is_available = not overlapping.exists()
+                # Verificar si hay overlap con bookings existentes (en memoria)
+                is_available = True
+                for booking in bookings_by_court[court.id]:
+                    if booking['start_time'] < slot_end and booking['end_time'] > current_time:
+                        is_available = False
+                        break
                 
                 # No mostrar slots en el pasado
-                now = timezone.now()
                 slot_datetime = timezone.make_aware(datetime.combine(date, current_time))
                 if slot_datetime <= now:
                     is_available = False
